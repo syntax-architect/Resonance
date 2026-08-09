@@ -31,7 +31,7 @@ const useLibraryStore = create((set, get) => ({
         song_id: song.id,
         song_title: song.title,
         song_artist: song.artist,
-        song_img: song.coverUrl,
+        song_img: song.img,
         song_url: song.audioUrl
       };
       

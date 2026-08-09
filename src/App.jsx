@@ -10,11 +10,18 @@ import TopBar from './components/TopBar';
 import MobileNav from './components/MobileNav';
 import LanguageModal from './components/LanguageModal';
 import Player from './components/Player';
+import QueuePanel from './components/QueuePanel';
 
 // Pages
 import Home from './pages/Home';
 import Search from './pages/Search';
 import Library from './pages/Library';
+import Playlist from './pages/Playlist';
+import Artist from './pages/Artist';
+
+if (!import.meta.env.VITE_JAMENDO_CLIENT_ID || import.meta.env.VITE_JAMENDO_CLIENT_ID === 'your_client_id_here') {
+  console.warn('VITE_JAMENDO_CLIENT_ID is missing or not configured in environment variables. Jamendo API requests will fail!');
+}
 
 function App() {
   const [isLangModalOpen, setLangModalOpen] = useState(false);
@@ -48,8 +55,12 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
             <Route path="/library" element={<Library />} />
+            <Route path="/playlist/:id" element={<Playlist />} />
+            <Route path="/artist/:name" element={<Artist />} />
           </Routes>
         </main>
+
+        <QueuePanel />
 
         {/* Global Audio Player */}
         <Player />

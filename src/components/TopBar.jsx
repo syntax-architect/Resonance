@@ -1,10 +1,13 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight, Search, Download, Bell } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react';
+import useSearchStore from '../store/useSearchStore';
 
 function TopBar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { query, setQuery } = useSearchStore();
   
   return (
     <header className="topbar">
@@ -19,7 +22,18 @@ function TopBar() {
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '16px', position: 'relative', width: '100%', maxWidth: '360px' }}>
           <div className="search-container" style={{ borderRadius: '500px', display: 'flex', alignItems: 'center', padding: '12px 20px', width: '100%' }}>
             <Search size={20} color="var(--text-secondary)" style={{ flexShrink: 0 }} />
-            <input type="text" placeholder="What do you want to play?" style={{ background: 'transparent', border: 'none', color: '#fff', marginLeft: '12px', fontSize: '0.95rem', outline: 'none', width: '100%', fontFamily: 'inherit' }} />
+            <input 
+              type="text" 
+              placeholder="What do you want to play?" 
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                if (location.pathname !== '/search') {
+                  navigate('/search');
+                }
+              }}
+              style={{ background: 'transparent', border: 'none', color: '#fff', marginLeft: '12px', fontSize: '0.95rem', outline: 'none', width: '100%', fontFamily: 'inherit' }} 
+            />
           </div>
         </div>
       </div>

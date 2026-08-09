@@ -2,26 +2,71 @@ import React, { useState, useEffect } from 'react';
 import MusicCard from '../components/MusicCard';
 import RecentCard from '../components/RecentCard';
 import { useUser } from '@clerk/clerk-react';
+import { useSupabase } from '../hooks/useSupabase';
 
-// Using actual royalty-free MP3 URLs so the player works!
-const TRENDING_SONGS = [
-  { id: 1, title: 'Lofi Chill', artist: 'Lofi Maker', img: 'https://i.scdn.co/image/ab67616d00001e02816999276d41beadffb0410f', audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
-  { id: 2, title: 'Electronic Vibes', artist: 'Synthy', img: 'https://i.scdn.co/image/ab67616d00001e0292cd4d96c4293f01bda60312', audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
-  { id: 3, title: 'Acoustic Journey', artist: 'Guitarist', img: 'https://i.scdn.co/image/ab67616d00001e024bcf8f8373b4ba9e52cbb935', audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
-  { id: 4, title: 'Piano Serenade', artist: 'Pianist', img: 'https://i.scdn.co/image/ab67616d00001e02379bb50352ffb6cb2f207d57', audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
-  { id: 5, title: 'Upbeat Pop', artist: 'Pop Star', img: 'https://i.scdn.co/image/ab67616d00001e02c5f1cdab2f9cb79b69208f23', audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' },
-];
+import { fetchTrendingTracks } from '../lib/jamendo';
 
 function Home() {
   const { isSignedIn } = useUser();
+  const supabaseClient = useSupabase();
   const [greeting, setGreeting] = useState('');
+  const [trendingSongs, setTrendingSongs] = useState([]);
+  const [isLoadingSongs, setIsLoadingSongs] = useState(true);
+  const [recentlyPlayed, setRecentlyPlayed] = useState([]);
 
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('Good morning');
     else if (hour < 18) setGreeting('Good afternoon');
     else setGreeting('Good evening');
+
+    const loadTracks = async () => {
+      setIsLoadingSongs(true);
+      try {
+        const tracks = await fetchTrendingTracks(12);
+        setTrendingSongs(tracks || []);
+      } catch (error) {
+        console.error("Error fetching tracks:", error);
+        setTrendingSongs([]);
+      } finally {
+        setIsLoadingSongs(false);
+      }
+    };
+    
+    loadTracks();
   }, []);
+
+  useEffect(() => {
+    if (isSignedIn) {
+      const loadHistory = async () => {
+        const { data } = await supabaseClient
+          .from('play_history')
+          .select('*')
+          .order('played_at', { ascending: false })
+          .limit(30);
+          
+        if (data) {
+          const uniqueSongs = [];
+          const seenIds = new Set();
+          for (const row of data) {
+            if (!seenIds.has(row.song_id)) {
+              seenIds.add(row.song_id);
+              uniqueSongs.push({
+                id: row.song_id,
+                title: row.song_title,
+                artist: row.song_artist,
+                img: row.song_img,
+                audioUrl: row.song_url
+              });
+            }
+            if (uniqueSongs.length >= 10) break;
+          }
+          setRecentlyPlayed(uniqueSongs);
+        }
+      };
+      loadHistory();
+    }
+  }, [isSignedIn, supabaseClient]);
 
   return (
     <div style={{ padding: '32px 24px' }}>
@@ -36,10 +81,29 @@ function Home() {
           
           <h2 style={{ fontSize: '1.75rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '24px' }}>{greeting}</h2>
           
+          {recentlyPlayed.length > 0 && (
+            <div style={{ marginBottom: '40px' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '16px' }}>Recently played</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px' }}>
+                {recentlyPlayed.map((song, idx) => (
+                  <MusicCard key={song.id} song={song} delayIndex={idx} contextQueue={recentlyPlayed} />
+                ))}
+              </div>
+            </div>
+          )}
+          
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px', marginBottom: '48px' }}>
-            {TRENDING_SONGS.slice(0, 6).map((song) => (
-              <RecentCard key={song.id} item={song} contextQueue={TRENDING_SONGS} />
-            ))}
+            {isLoadingSongs ? (
+              Array(6).fill(0).map((_, idx) => (
+                <div key={idx} style={{ height: '80px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', animation: 'pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1)' }} />
+              ))
+            ) : trendingSongs.length > 0 ? (
+              trendingSongs.slice(0, 6).map((song) => (
+                <RecentCard key={song.id} item={song} contextQueue={trendingSongs} />
+              ))
+            ) : (
+              <p style={{ color: 'var(--text-secondary)' }}>No tracks available right now</p>
+            )}
           </div>
         </div>
       )}
@@ -49,9 +113,17 @@ function Home() {
       </div>
       
       <div className="animate-fade-in delay-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px', marginBottom: '56px' }}>
-        {TRENDING_SONGS.map((song, idx) => (
-          <MusicCard key={song.id} song={song} delayIndex={idx} contextQueue={TRENDING_SONGS} />
-        ))}
+        {isLoadingSongs ? (
+          Array(12).fill(0).map((_, idx) => (
+            <div key={idx} className="card" style={{ height: '220px', animation: 'pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1)' }}></div>
+          ))
+        ) : trendingSongs.length > 0 ? (
+          trendingSongs.map((song, idx) => (
+            <MusicCard key={song.id} song={song} delayIndex={idx} contextQueue={trendingSongs} />
+          ))
+        ) : (
+          <p style={{ color: 'var(--text-secondary)', gridColumn: '1 / -1' }}>No tracks available right now</p>
+        )}
       </div>
 
       <div className="animate-fade-in delay-3" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px' }}>

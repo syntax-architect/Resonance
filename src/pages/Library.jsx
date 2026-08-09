@@ -1,5 +1,4 @@
 import React from 'react';
-import { Play } from 'lucide-react';
 import useLibraryStore from '../store/useLibraryStore';
 import MusicCard from '../components/MusicCard';
 import { useUser, SignInButton } from '@clerk/clerk-react';
