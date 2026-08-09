@@ -1,8 +1,9 @@
 import React from 'react';
 import { ArrowLeft, ArrowRight, Search, Download, Bell } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react';
+import { SignedIn, SignedOut, SignInButton, SignUpButton } from '@clerk/clerk-react';
 import useSearchStore from '../store/useSearchStore';
+import ProfileDropdown from './ProfileDropdown';
 
 function TopBar() {
   const navigate = useNavigate();
@@ -40,13 +41,17 @@ function TopBar() {
       
       <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '24px', fontSize: '0.95rem', fontWeight: 600, whiteSpace: 'nowrap' }}>
         <SignedOut>
-          <span style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Premium</span>
-          <span style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Support</span>
-          <span style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Download</span>
+          <span onClick={() => window.open('https://spotify.com/premium', '_blank')} style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Premium</span>
+          <span onClick={() => window.open('https://support.spotify.com', '_blank')} style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Support</span>
+          <span onClick={() => window.open('https://spotify.com/download', '_blank')} style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Download</span>
           <div style={{ width: '1px', height: '24px', background: 'var(--glass-border)', margin: '0 -8px' }} className="hide-on-tablet" />
         </SignedOut>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} className="hover-white hide-on-mobile">
+        <div 
+          onClick={() => alert('Resonance is currently a web preview. Desktop app installation coming soon!')}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} 
+          className="hover-white hide-on-mobile"
+        >
           <Download size={18} /> Install App
         </div>
         
@@ -58,7 +63,7 @@ function TopBar() {
               style={{ cursor: 'pointer', color: location.pathname === '/content-feed' ? 'var(--text-primary)' : 'var(--text-secondary)' }} 
               onClick={() => navigate('/content-feed')}
             />
-            <UserButton />
+            <ProfileDropdown />
           </div>
         </SignedIn>
         

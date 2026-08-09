@@ -4,9 +4,11 @@ import { Link } from 'react-router-dom';
 import useLibraryStore from '../../store/useLibraryStore';
 import usePlaylistStore from '../../store/usePlaylistStore';
 import { useSupabase } from '../../hooks/useSupabase';
+import { useClerk } from '@clerk/clerk-react';
 
 function SidebarLibrary({ isSignedIn, user }) {
   const supabaseClient = useSupabase();
+  const { openSignUp } = useClerk();
   const { likedSongs } = useLibraryStore();
   const { playlists, fetchPlaylists, createPlaylist } = usePlaylistStore();
   
@@ -105,7 +107,7 @@ function SidebarLibrary({ isSignedIn, user }) {
           <div className="sidebar-action-box">
             <h4>Create your first playlist</h4>
             <p>It's easy, we'll help you</p>
-            <button className="btn-pill-accent" style={{ padding: '8px 20px', fontSize: '0.875rem' }}>Create playlist</button>
+            <button className="btn-pill-accent" onClick={() => openSignUp()} style={{ padding: '8px 20px', fontSize: '0.875rem' }}>Create playlist</button>
           </div>
         )}
       </div>
