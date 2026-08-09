@@ -30,7 +30,6 @@ function Library() {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
           {likedSongs.map((like, i) => {
-            // Map Supabase columns to MusicCard format
             const song = {
               id: like.song_id,
               title: like.song_title,
@@ -38,7 +37,17 @@ function Library() {
               img: like.song_img,
               audioUrl: like.song_url
             };
-            return <MusicCard key={like.id} song={song} delayIndex={i} />;
+            
+            // Build the queue array for this context
+            const queueList = likedSongs.map(l => ({
+              id: l.song_id,
+              title: l.song_title,
+              artist: l.song_artist,
+              img: l.song_img,
+              audioUrl: l.song_url
+            }));
+            
+            return <MusicCard key={like.id} song={song} delayIndex={i} contextQueue={queueList} />;
           })}
         </div>
       )}

@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import MusicCard from '../components/MusicCard';
+import RecentCard from '../components/RecentCard';
+import { useUser } from '@clerk/clerk-react';
 
 // Using actual royalty-free MP3 URLs so the player works!
 const TRENDING_SONGS = [
@@ -11,15 +13,44 @@ const TRENDING_SONGS = [
 ];
 
 function Home() {
+  const { isSignedIn } = useUser();
+  const [greeting, setGreeting] = useState('');
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting('Good morning');
+    else if (hour < 18) setGreeting('Good afternoon');
+    else setGreeting('Good evening');
+  }, []);
+
   return (
     <div style={{ padding: '32px 24px' }}>
+      
+      {isSignedIn && (
+        <div className="animate-fade-in delay-1">
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+            <div className="filter-pill active">All</div>
+            <div className="filter-pill">Music</div>
+            <div className="filter-pill">Podcasts</div>
+          </div>
+          
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '24px' }}>{greeting}</h2>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px', marginBottom: '48px' }}>
+            {TRENDING_SONGS.slice(0, 6).map((song) => (
+              <RecentCard key={song.id} item={song} contextQueue={TRENDING_SONGS} />
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="animate-fade-in delay-2" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px' }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>Trending songs</h2>
       </div>
       
       <div className="animate-fade-in delay-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px', marginBottom: '56px' }}>
         {TRENDING_SONGS.map((song, idx) => (
-          <MusicCard key={song.id} song={song} delayIndex={idx} />
+          <MusicCard key={song.id} song={song} delayIndex={idx} contextQueue={TRENDING_SONGS} />
         ))}
       </div>
 

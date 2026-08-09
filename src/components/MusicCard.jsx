@@ -2,8 +2,8 @@ import React from 'react';
 import { Play, Pause } from 'lucide-react';
 import usePlayerStore from '../store/usePlayerStore';
 
-function MusicCard({ song, delayIndex }) {
-  const { currentTrack, isPlaying, play, pause, setTrack } = usePlayerStore();
+function MusicCard({ song, delayIndex, contextQueue }) {
+  const { currentTrack, isPlaying, play, pause, setQueue } = usePlayerStore();
   
   const isThisPlaying = currentTrack?.id === song.id && isPlaying;
   
@@ -13,7 +13,12 @@ function MusicCard({ song, delayIndex }) {
       if (isPlaying) pause();
       else play();
     } else {
-      setTrack(song);
+      if (contextQueue) {
+        const idx = contextQueue.findIndex(s => s.id === song.id);
+        setQueue(contextQueue, idx !== -1 ? idx : 0);
+      } else {
+        setQueue([song], 0);
+      }
     }
   };
 

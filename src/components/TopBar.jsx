@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight, Search, Download } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Search, Download, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react';
 
@@ -25,16 +25,20 @@ function TopBar() {
       </div>
       
       <div className="topbar-actions" style={{ display: 'flex', alignItems: 'center', gap: '24px', fontSize: '0.95rem', fontWeight: 600, whiteSpace: 'nowrap' }}>
-        <span style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Premium</span>
-        <span style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Support</span>
-        <span style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Download</span>
-        <div style={{ width: '1px', height: '24px', background: 'var(--glass-border)', margin: '0 -8px' }} className="hide-on-tablet" />
+        <SignedOut>
+          <span style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Premium</span>
+          <span style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Support</span>
+          <span style={{ cursor: 'pointer' }} className="hover-white hide-on-tablet">Download</span>
+          <div style={{ width: '1px', height: '24px', background: 'var(--glass-border)', margin: '0 -8px' }} className="hide-on-tablet" />
+        </SignedOut>
+        
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }} className="hover-white hide-on-mobile">
           <Download size={18} /> Install App
         </div>
         
         <SignedIn>
-          <div className="animate-fade" style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: '16px' }}>
+          <div className="animate-fade" style={{ display: 'flex', alignItems: 'center', gap: '20px', marginLeft: '16px' }}>
+            <Bell size={20} className="hover-white" style={{ cursor: 'pointer', color: 'var(--text-secondary)' }} />
             <UserButton />
           </div>
         </SignedIn>

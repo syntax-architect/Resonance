@@ -6,7 +6,10 @@ import { useSupabase } from '../hooks/useSupabase';
 import useLibraryStore from '../store/useLibraryStore';
 
 function Player() {
-  const { currentTrack, isPlaying, play, pause, volume, setVolume } = usePlayerStore();
+  const { 
+    currentTrack, isPlaying, play, pause, volume, setVolume,
+    isShuffle, repeatMode, playNext, playPrev, toggleShuffle, toggleRepeat
+  } = usePlayerStore();
   const { isSignedIn, user } = useUser();
   const supabaseClient = useSupabase();
   const { likedSongs, toggleLike } = useLibraryStore();
@@ -38,6 +41,15 @@ function Player() {
     if (audioRef.current) {
       setProgress(audioRef.current.currentTime);
       setDuration(audioRef.current.duration);
+    }
+  };
+
+  const handleEnded = () => {
+    if (repeatMode === 'one') {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(e => console.log('Audio play failed:', e));
+    } else {
+      playNext();
     }
   };
 
@@ -80,7 +92,7 @@ function Player() {
         ref={audioRef}
         src={currentTrack.audioUrl}
         onTimeUpdate={handleTimeUpdate}
-        onEnded={() => pause()} // Auto pause when track ends
+        onEnded={handleEnded}
       />
 
       {/* Now Playing Info */}
@@ -111,8 +123,8 @@ function Player() {
       {/* Player Controls */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '40%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '8px' }}>
-          <Shuffle size={16} color="var(--text-secondary)" style={{ cursor: 'pointer' }} />
-          <SkipBack size={20} color="var(--text-secondary)" style={{ cursor: 'pointer' }} />
+          <Shuffle size={16} color={isShuffle ? 'var(--accent-color)' : 'var(--text-secondary)'} onClick={toggleShuffle} style={{ cursor: 'pointer', transition: 'color 0.2s' }} className="hover-white" />
+          <SkipBack size={20} color="var(--text-secondary)" onClick={playPrev} style={{ cursor: 'pointer' }} className="hover-white" />
           
           <button 
             onClick={() => isPlaying ? pause() : play()}
@@ -121,8 +133,14 @@ function Player() {
             {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" style={{ marginLeft: '2px' }} />}
           </button>
           
-          <SkipForward size={20} color="var(--text-secondary)" style={{ cursor: 'pointer' }} />
-          <Repeat size={16} color="var(--text-secondary)" style={{ cursor: 'pointer' }} />
+          <SkipForward size={20} color="var(--text-secondary)" onClick={playNext} style={{ cursor: 'pointer' }} className="hover-white" />
+          
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Repeat size={16} color={repeatMode !== 'none' ? 'var(--accent-color)' : 'var(--text-secondary)'} onClick={toggleRepeat} style={{ cursor: 'pointer', transition: 'color 0.2s' }} className="hover-white" />
+            {repeatMode === 'one' && (
+              <span style={{ position: 'absolute', fontSize: '9px', fontWeight: 'bold', color: 'var(--accent-color)', pointerEvents: 'none', bottom: '-8px' }}>1</span>
+            )}
+          </div>
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', maxWidth: '600px' }}>
