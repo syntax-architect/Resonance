@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
+import { useSupabase } from './hooks/useSupabase';
+import useLibraryStore from './store/useLibraryStore';
 
 // Components
 import Sidebar from './components/Sidebar';
@@ -15,6 +18,17 @@ import Library from './pages/Library';
 
 function App() {
   const [isLangModalOpen, setLangModalOpen] = useState(false);
+  const { isSignedIn } = useUser();
+  const supabaseClient = useSupabase();
+  const { fetchLikedSongs, clearLibrary } = useLibraryStore();
+
+  useEffect(() => {
+    if (isSignedIn) {
+      fetchLikedSongs(supabaseClient);
+    } else {
+      clearLibrary();
+    }
+  }, [isSignedIn, supabaseClient, fetchLikedSongs, clearLibrary]);
 
   return (
     <>

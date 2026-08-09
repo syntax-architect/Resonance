@@ -1,31 +1,47 @@
 import React from 'react';
 import { Play } from 'lucide-react';
+import useLibraryStore from '../store/useLibraryStore';
+import MusicCard from '../components/MusicCard';
+import { useUser, SignInButton } from '@clerk/clerk-react';
 
 function Library() {
+  const { likedSongs, isLoading } = useLibraryStore();
+  const { isSignedIn } = useUser();
+
+  if (!isSignedIn) {
+    return (
+      <div style={{ padding: '64px 24px', textAlign: 'center' }} className="animate-fade-in">
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '16px' }}>Log in to see your Library</h2>
+        <SignInButton mode="modal">
+          <button className="btn-pill-accent">Log In</button>
+        </SignInButton>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: '32px 24px' }} className="animate-fade-in">
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '24px' }}>Your Library</h2>
+      <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '24px' }}>Liked Songs</h2>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
-        
-        {/* Liked Songs Mock */}
-        <div className="card" style={{ background: 'linear-gradient(135deg, #450af5, #c4efd9)', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '200px' }}>
-          <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>Liked Songs</h3>
-          <p style={{ fontSize: '0.9rem', color: '#fff', opacity: 0.8 }}>120 liked songs</p>
-          <button className="play-btn">
-            <Play size={20} fill="currentColor" style={{ marginLeft: '4px' }} />
-          </button>
+      {isLoading ? (
+        <p style={{ color: 'var(--text-secondary)' }}>Loading your library...</p>
+      ) : likedSongs.length === 0 ? (
+        <p style={{ color: 'var(--text-secondary)' }}>You haven't liked any songs yet. Go find some music!</p>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
+          {likedSongs.map((like, i) => {
+            // Map Supabase columns to MusicCard format
+            const song = {
+              id: like.song_id,
+              title: like.song_title,
+              artist: like.song_artist,
+              img: like.song_img,
+              audioUrl: like.song_url
+            };
+            return <MusicCard key={like.id} song={song} delayIndex={i} />;
+          })}
         </div>
-
-        {/* Empty Placeholder Playlists */}
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="card" style={{ height: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
-            <div style={{ width: '80px', height: '80px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', marginBottom: '16px' }}></div>
-            <h4 style={{ fontSize: '0.95rem', fontWeight: 600 }}>My Playlist #{i}</h4>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>By User</p>
-          </div>
-        ))}
-      </div>
+      )}
     </div>
   );
 }

@@ -1,15 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Volume2, Heart, Shuffle, Repeat } from 'lucide-react';
 import usePlayerStore from '../store/usePlayerStore';
-import { useUser, SignUpButton } from '@clerk/clerk-react';
+import { useUser, SignUpButton, SignInButton } from '@clerk/clerk-react';
+import { useSupabase } from '../hooks/useSupabase';
+import useLibraryStore from '../store/useLibraryStore';
 
 function Player() {
   const { currentTrack, isPlaying, play, pause, volume, setVolume } = usePlayerStore();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
+  const supabaseClient = useSupabase();
+  const { likedSongs, toggleLike } = useLibraryStore();
   const audioRef = useRef(null);
   
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  
+  const isLiked = currentTrack && likedSongs.some(s => s.song_id === currentTrack.id);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -80,10 +87,25 @@ function Player() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '30%' }}>
         <img src={currentTrack.img} alt="cover" style={{ width: '56px', height: '56px', borderRadius: '4px', objectFit: 'cover' }} />
         <div>
-          <h4 style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>{currentTrack.title}</h4>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{currentTrack.artist}</p>
+          <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff', marginBottom: '4px' }}>{currentTrack.title}</div>
+          <div style={{ fontSize: '0.75rem', color: '#b3b3b3' }}>{currentTrack.artist}</div>
         </div>
-        <Heart size={16} color="var(--text-secondary)" style={{ marginLeft: '8px', cursor: 'pointer' }} />
+        <div style={{ marginLeft: '16px' }}>
+          {user ? (
+            <Heart 
+              size={20} 
+              fill={isLiked ? "var(--accent-color)" : "none"} 
+              color={isLiked ? "var(--accent-color)" : "#b3b3b3"} 
+              onClick={() => toggleLike(currentTrack, supabaseClient, user.id)}
+              style={{ cursor: 'pointer', transition: 'all 0.2s' }} 
+              className="hover-accent"
+            />
+          ) : (
+            <SignInButton mode="modal">
+              <Heart size={20} color="#b3b3b3" style={{ cursor: 'pointer' }} className="hover-white" />
+            </SignInButton>
+          )}
+        </div>
       </div>
 
       {/* Player Controls */}
