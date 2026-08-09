@@ -4,7 +4,7 @@ import { SignInButton } from '@clerk/clerk-react';
 
 function PlayerInfo({ currentTrack, isLiked, toggleLike, user, supabaseClient }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '30%' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '30%' }} className="player-info-mobile">
       <img src={currentTrack.img} alt="cover" style={{ width: '56px', height: '56px', borderRadius: '4px', objectFit: 'cover' }} />
       <div>
         <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#fff', marginBottom: '4px' }}>{currentTrack.title}</div>
@@ -15,7 +15,7 @@ function PlayerInfo({ currentTrack, isLiked, toggleLike, user, supabaseClient })
             target="_blank" 
             rel="noopener noreferrer"
             style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textDecoration: 'none', display: 'block', marginTop: '4px' }}
-            className="hover-white"
+            className="hover-white hide-on-mobile-player"
           >
             CC Licensed
           </a>

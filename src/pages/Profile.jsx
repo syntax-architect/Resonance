@@ -90,7 +90,7 @@ function Profile() {
         </div>
       </div>
 
-      <div style={{ padding: '24px' }}>
+      <div className="page-padding">
         
         {/* Playlists Section */}
         {playlists.length > 0 && (

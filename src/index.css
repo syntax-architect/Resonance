@@ -205,6 +205,10 @@ body {
 }
 
 /* Utilities */
+.page-padding {
+  padding: 32px 24px;
+}
+
 .hover-white {
   color: var(--text-secondary);
   transition: all 0.3s ease;
@@ -434,6 +438,10 @@ body {
     display: none !important;
   }
   
+  .page-padding {
+    padding: 16px 12px !important;
+  }
+  
   .main-content {
     border-radius: 0;
     border-left: none;
@@ -463,6 +471,10 @@ body {
   
   .hide-on-mobile-player {
     display: none !important;
+  }
+  
+  .player-controls-container {
+    width: auto !important;
   }
   
   .player-info-mobile {

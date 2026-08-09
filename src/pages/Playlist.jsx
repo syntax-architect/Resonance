@@ -35,7 +35,7 @@ function Playlist() {
   }));
 
   return (
-    <div style={{ padding: '32px 24px' }} className="animate-fade-in">
+    <div className="page-padding animate-fade-in">
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px' }}>
         <Link to="/" style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center' }}>
           <ArrowLeft size={24} className="hover-white" />

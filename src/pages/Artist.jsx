@@ -62,7 +62,7 @@ function Artist() {
         </h1>
       </div>
 
-      <div style={{ padding: '24px' }}>
+      <div className="page-padding">
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '32px' }}>
           <button 
             onClick={handlePlayAll}

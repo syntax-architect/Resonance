@@ -40,7 +40,7 @@ function Search() {
   }, [query]);
 
   return (
-    <div style={{ padding: '32px 24px' }} className="animate-fade-in">
+    <div className="page-padding animate-fade-in">
       <div style={{ position: 'relative', marginBottom: '32px', maxWidth: '600px' }}>
         <SearchIcon style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} size={20} />
         <input 

@@ -69,7 +69,7 @@ function Home() {
   }, [isSignedIn, supabaseClient]);
 
   return (
-    <div style={{ padding: '32px 24px' }}>
+    <div className="page-padding">
       
       {isSignedIn && (
         <div className="animate-fade-in delay-1">

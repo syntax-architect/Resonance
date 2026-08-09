@@ -25,7 +25,7 @@ function ContentFeed() {
   }, []);
 
   return (
-    <div style={{ padding: '24px', paddingBottom: '120px' }}>
+    <div className="page-padding">
       
       {showBanner && (
         <div className="animate-fade-in" style={{ 

@@ -19,7 +19,7 @@ function Library() {
   }
 
   return (
-    <div style={{ padding: '32px 24px' }} className="animate-fade-in">
+    <div className="page-padding animate-fade-in">
       <h2 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '24px' }}>Liked Songs</h2>
       
       {isLoading ? (
