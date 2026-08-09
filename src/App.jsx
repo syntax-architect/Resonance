@@ -18,6 +18,7 @@ import Search from './pages/Search';
 import Library from './pages/Library';
 import Playlist from './pages/Playlist';
 import Artist from './pages/Artist';
+import ContentFeed from './pages/ContentFeed';
 
 if (!import.meta.env.VITE_JAMENDO_CLIENT_ID || import.meta.env.VITE_JAMENDO_CLIENT_ID === 'your_client_id_here') {
   console.warn('VITE_JAMENDO_CLIENT_ID is missing or not configured in environment variables. Jamendo API requests will fail!');
@@ -57,6 +58,7 @@ function App() {
             <Route path="/library" element={<Library />} />
             <Route path="/playlist/:id" element={<Playlist />} />
             <Route path="/artist/:name" element={<Artist />} />
+            <Route path="/content-feed" element={<ContentFeed />} />
           </Routes>
         </main>
 

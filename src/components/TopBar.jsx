@@ -52,7 +52,12 @@ function TopBar() {
         
         <SignedIn>
           <div className="animate-fade" style={{ display: 'flex', alignItems: 'center', gap: '20px', marginLeft: '16px' }}>
-            <Bell size={20} className="hover-white" style={{ cursor: 'pointer', color: 'var(--text-secondary)' }} />
+            <Bell 
+              size={20} 
+              className="hover-white" 
+              style={{ cursor: 'pointer', color: location.pathname === '/content-feed' ? 'var(--text-primary)' : 'var(--text-secondary)' }} 
+              onClick={() => navigate('/content-feed')}
+            />
             <UserButton />
           </div>
         </SignedIn>

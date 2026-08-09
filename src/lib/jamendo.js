@@ -54,3 +54,21 @@ export async function searchTracks(query, limit = 20) {
     return [];
   }
 }
+
+export async function fetchNewReleases(limit = 20) {
+  try {
+    const clientId = getClientId();
+    const url = `${BASE_URL}/tracks/?client_id=${clientId}&format=json&limit=${limit}&order=releasedate_desc&include=musicinfo&audioformat=mp32`;
+    
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data.results.map(mapJamendoTrack);
+  } catch (error) {
+    console.error('Error fetching new releases from Jamendo:', error);
+    return [];
+  }
+}
