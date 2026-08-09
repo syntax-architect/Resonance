@@ -3,7 +3,7 @@ import { Volume2, ListMusic } from 'lucide-react';
 
 function PlayerVolume({ volume, setVolume, isQueueOpen, toggleQueue }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', width: '30%' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', width: '30%' }} className="hide-on-mobile-player">
       <ListMusic 
         size={20} 
         color={isQueueOpen ? 'var(--accent-color)' : 'var(--text-secondary)'} 

@@ -7,10 +7,10 @@ function PlayerControls({
   progress, duration, handleSeek, formatTime
 }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '40%' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '8px' }}>
-        <Shuffle size={16} color={isShuffle ? 'var(--accent-color)' : 'var(--text-secondary)'} onClick={toggleShuffle} style={{ cursor: 'pointer', transition: 'color 0.2s' }} className="hover-white" />
-        <SkipBack size={20} color="var(--text-secondary)" onClick={playPrev} style={{ cursor: 'pointer' }} className="hover-white" />
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '40%' }} className="player-controls-container">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '8px' }} className="player-controls-buttons">
+        <Shuffle size={16} color={isShuffle ? 'var(--accent-color)' : 'var(--text-secondary)'} onClick={toggleShuffle} style={{ cursor: 'pointer', transition: 'color 0.2s' }} className="hover-white hide-on-mobile-player" />
+        <SkipBack size={20} color="var(--text-secondary)" onClick={playPrev} style={{ cursor: 'pointer' }} className="hover-white hide-on-mobile-player" />
         
         <button 
           onClick={() => isPlaying ? pause() : play()}
@@ -19,9 +19,9 @@ function PlayerControls({
           {isPlaying ? <Pause size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" style={{ marginLeft: '2px' }} />}
         </button>
         
-        <SkipForward size={20} color="var(--text-secondary)" onClick={playNext} style={{ cursor: 'pointer' }} className="hover-white" />
+        <SkipForward size={20} color="var(--text-secondary)" onClick={playNext} style={{ cursor: 'pointer' }} className="hover-white hide-on-mobile-player" />
         
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="hide-on-mobile-player">
           <Repeat size={16} color={repeatMode !== 'none' ? 'var(--accent-color)' : 'var(--text-secondary)'} onClick={toggleRepeat} style={{ cursor: 'pointer', transition: 'color 0.2s' }} className="hover-white" />
           {repeatMode === 'one' && (
             <span style={{ position: 'absolute', fontSize: '9px', fontWeight: 'bold', color: 'var(--accent-color)', pointerEvents: 'none', bottom: '-8px' }}>1</span>
@@ -29,7 +29,7 @@ function PlayerControls({
         </div>
       </div>
       
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', maxWidth: '600px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', maxWidth: '600px' }} className="hide-on-mobile-player">
         <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', minWidth: '35px', textAlign: 'right' }}>{formatTime(progress)}</span>
         <input 
           type="range" 

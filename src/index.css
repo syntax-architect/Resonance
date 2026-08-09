@@ -414,11 +414,11 @@ body {
 @media (max-width: 768px) {
   .app-container {
     grid-template-areas:
-      "main"
-      "footer";
+      "main";
     grid-template-columns: 1fr;
-    padding: 8px;
-    gap: 8px;
+    grid-template-rows: 1fr;
+    padding: 0;
+    gap: 0;
   }
   
   .sidebar {
@@ -427,6 +427,7 @@ body {
   
   .topbar {
     padding: 16px;
+    border-radius: 0;
   }
   
   .search-container, .topbar-actions {
@@ -434,17 +435,39 @@ body {
   }
   
   .main-content {
-    border-radius: 16px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    padding-bottom: 140px; /* Space for mini-player and mobile nav */
   }
   
   .preview-banner {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 16px;
-    padding: 16px;
-    text-align: center;
-    border-radius: 16px;
-    margin-bottom: 76px; /* Space for the bottom tab bar */
+    position: fixed;
+    bottom: 76px; /* Just above mobile nav */
+    left: 8px;
+    right: 8px;
+    width: auto;
+    height: 56px !important;
+    padding: 0 12px !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    border-radius: 8px;
+    background: rgba(15, 20, 30, 0.95) !important; /* solid darker glass */
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    margin-bottom: 0 !important;
+    z-index: 49;
+  }
+  
+  .hide-on-mobile-player {
+    display: none !important;
+  }
+  
+  .player-info-mobile {
+    flex: 1;
+    min-width: 0;
   }
 
   .mobile-tab-bar {
